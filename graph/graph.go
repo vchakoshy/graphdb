@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+const AppVersion = "0.0.1"
+
 // Graph
 type Graph struct {
 	// store user following
