@@ -2,6 +2,7 @@ package graph
 
 import (
 	"fmt"
+	"sync"
 )
 
 const AppVersion = "0.0.1"
@@ -10,6 +11,7 @@ const AppVersion = "0.0.1"
 type Graph struct {
 	// store user following
 	follow map[int64][]int64
+	lock   sync.RWMutex
 }
 
 func NewGraph() *Graph {
@@ -19,6 +21,8 @@ func NewGraph() *Graph {
 }
 
 func (g *Graph) GetFollows(from int64) ([]int64, error) {
+	g.lock.Lock()
+	defer g.lock.Unlock()
 	if v, ok := g.follow[from]; ok {
 		return v, nil
 	}
@@ -62,6 +66,8 @@ func (g *Graph) AddFollow(from, to int64) *Graph {
 		// we should raise error
 		return g
 	}
+	g.lock.Lock()
+	defer g.lock.Unlock()
 	if contains(g.follow[from], to) {
 		return g
 	}
