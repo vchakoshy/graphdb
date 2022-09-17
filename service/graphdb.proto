@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option go_package = "github.com/vchakoshy/graphdb/service";
+// option java_multiple_files = true;
+// option java_package = "io.grpc.examples.routeguide";
+// option java_outer_classname = "RouteGuideProto";
+
+package service;
+
+service Graphdb {
+    rpc GetFriendsOfFriends(User) returns (UserSlice) {}
+    rpc AddFollow(Follow) returns (Follow) {}
+}
+
+message UserSlice {
+    repeated User users = 1;
+}
+
+message User {
+    int64 id = 1; 
+}
+
+message Follow {
+    int64 from = 1;
+    int64 to = 2;
+}
+
+message Unfollow {
+    int64 from = 1;
+    int64 to = 2;
+}
