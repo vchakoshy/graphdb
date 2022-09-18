@@ -15,7 +15,7 @@ var graphClient *graph.Graph
 func Run() {
 	graphClient = graph.NewGraph()
 
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", 8080))
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", 8080))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
