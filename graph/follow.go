@@ -16,9 +16,9 @@ func (f *Follow) CountAll() int {
 	return len(f.Data)
 }
 
-// getLeaders returns the list of users who
+// GetLeaders returns the list of users who
 // followed by the current from user
-func (f *Follow) getLeaders(from int64) []int64 {
+func (f *Follow) GetLeaders(from int64) []int64 {
 	var leaders []int64
 	if _, ok := f.Data[from]; ok {
 		// map key to value
@@ -34,7 +34,7 @@ func (f *Follow) getLeaders(from int64) []int64 {
 }
 
 func (f *Follow) List(from int64) ([]int64, error) {
-	leaders := f.getLeaders(from)
+	leaders := f.GetLeaders(from)
 	if len(leaders) > 0 {
 		return leaders, nil
 	}
