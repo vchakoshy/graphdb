@@ -10,16 +10,23 @@ const AppVersion = "0.0.1"
 // Graph
 type Graph struct {
 	// store user following
-	follow  map[int64][]int64
-	lock    sync.RWMutex
-	metrics Metrics
+	follow       map[int64][]int64
+	lock         sync.RWMutex
+	metrics      Metrics
+	queryOptions QueryOptions
 }
 
 func NewGraph() *Graph {
 	return &Graph{
-		follow:  make(map[int64][]int64),
-		metrics: Metrics{},
+		follow:       make(map[int64][]int64),
+		metrics:      Metrics{},
+		queryOptions: QueryOptionsDefault(),
 	}
+}
+
+func (g *Graph) SetQueryOptions(opts QueryOptions) *Graph {
+	g.queryOptions = opts
+	return g
 }
 
 func (g *Graph) GetMetrics() Metrics {
