@@ -8,6 +8,7 @@ services:
     mem_reservation: 128M
     ports:
       - 8080:8080
+      - 8081:8081
     environment:
       APP_VERSION: 0.0.1
       
