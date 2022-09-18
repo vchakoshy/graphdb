@@ -74,3 +74,12 @@ func (g *Graph) AddFollow(from, to int64) *Graph {
 	g.follow[from] = append(g.follow[from], to)
 	return g
 }
+
+func (g *Graph) RemoveFollow(from, to int64) *Graph {
+	g.lock.Lock()
+	defer g.lock.Unlock()
+
+	g.follow[from] = removeFromSlice(g.follow[from], to)
+
+	return g
+}

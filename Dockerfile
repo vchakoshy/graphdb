@@ -1,9 +1,9 @@
-FROM dockerhub.ir/golang:1.18-buster AS builder
+FROM dockerhub.ir/golang:1.18-buster
 
 WORKDIR /app
 COPY . .
 ENV GO111MODULE=on
-RUN go build -o main .
+RUN go build -mod=vendor -o main .
 
 ENTRYPOINT [ "./main", "api"]
 EXPOSE 8080

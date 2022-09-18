@@ -3,6 +3,8 @@ package graph
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGraph_GetFollows(t *testing.T) {
@@ -87,4 +89,18 @@ func TestGraph_GetFriendsOfFriends(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestGraph_RemoveFollow(t *testing.T) {
+	g := NewGraph()
+	g.AddFollow(1, 2)
+	g.AddFollow(1, 3)
+	g.AddFollow(1, 4)
+	g.RemoveFollow(1, 3)
+	r, err := g.GetFollows(1)
+	if err != nil {
+		t.Errorf("Graph.GetFriendsOfFriends() = %s", err.Error())
+	}
+	assert.Equal(t, r, []int64{2, 4})
+
 }
