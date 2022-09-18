@@ -1,4 +1,4 @@
-FROM dockerhub.ir/golang:1.18-buster
+FROM golang:1.18-buster
 
 WORKDIR /app
 COPY . .
