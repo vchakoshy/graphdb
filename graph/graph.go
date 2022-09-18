@@ -10,14 +10,22 @@ const AppVersion = "0.0.1"
 // Graph
 type Graph struct {
 	// store user following
-	follow map[int64][]int64
-	lock   sync.RWMutex
+	follow  map[int64][]int64
+	lock    sync.RWMutex
+	metrics Metrics
 }
 
 func NewGraph() *Graph {
 	return &Graph{
-		follow: make(map[int64][]int64),
+		follow:  make(map[int64][]int64),
+		metrics: Metrics{},
 	}
+}
+
+func (g *Graph) GetMetrics() Metrics {
+	m := g.metrics
+	m.FollowCount = len(g.follow)
+	return m
 }
 
 func (g *Graph) GetFollows(from int64) ([]int64, error) {

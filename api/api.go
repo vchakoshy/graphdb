@@ -22,6 +22,9 @@ func Run() {
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, "This is Graph DB")
 	})
+	r.GET("/stats", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"metrics": graphClient.GetMetrics()})
+	})
 
 	log.Println("Rest api Listening on: http://127.0.0.1:8081")
 
