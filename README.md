@@ -8,6 +8,10 @@ go run main.go api
 
 ## Client 
 
+```bash 
+go get -u github.com/vchakoshy/graphdb
+```
+
 ```golang
 import "github.com/vchakoshy/graphdb/service"
 ```

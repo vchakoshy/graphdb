@@ -37,12 +37,13 @@ to quickly create a Cobra application.`,
 		defer conn.Close()
 
 		client := service.NewGraphdbClient(conn)
-		client.AddFollow(context.Background(), &service.Follow{From: 1, To: 2})
-		client.AddFollow(context.Background(), &service.Follow{From: 2, To: 3})
-		client.AddFollow(context.Background(), &service.Follow{From: 2, To: 4})
-		client.AddFollow(context.Background(), &service.Follow{From: 2, To: 5})
+		ctx := context.Background()
+		client.AddFollow(ctx, &service.Follow{From: 1, To: 2})
+		client.AddFollow(ctx, &service.Follow{From: 2, To: 3})
+		client.AddFollow(ctx, &service.Follow{From: 2, To: 4})
+		client.AddFollow(ctx, &service.Follow{From: 2, To: 5})
 
-		res, err := client.GetFriendsOfFriends(context.Background(), &service.User{Id: 1})
+		res, err := client.GetFriendsOfFriends(ctx, &service.User{Id: 1})
 		if err != nil {
 			panic(err)
 		}
