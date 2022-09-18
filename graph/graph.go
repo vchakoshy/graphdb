@@ -1,7 +1,9 @@
 package graph
 
 import (
+	"encoding/gob"
 	"fmt"
+	"os"
 	"sync"
 )
 
@@ -96,4 +98,46 @@ func (g *Graph) RemoveFollow(from, to int64) *Graph {
 	g.lock.Unlock()
 
 	return g
+}
+
+func (g *Graph) save(path string) error {
+	fp, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	enc := gob.NewEncoder(fp)
+	defer func() {
+		if x := recover(); x != nil {
+			err = fmt.Errorf("Error registering item types with Gob library")
+		}
+	}()
+	g.lock.Lock()
+	defer g.lock.Unlock()
+
+	err = enc.Encode(&g.follow)
+	if err != nil {
+		fp.Close()
+		return err
+	}
+	return fp.Close()
+}
+
+func (g *Graph) Load(path string) error {
+	fp, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	dec := gob.NewDecoder(fp)
+	items := g.follow
+	err = dec.Decode(&items)
+	if err == nil {
+		g.lock.Lock()
+		defer g.lock.Unlock()
+		g.follow = items
+	}
+	if err != nil {
+		fp.Close()
+		return err
+	}
+	return fp.Close()
 }

@@ -3,27 +3,28 @@ package graph
 import "fmt"
 
 type Follow struct {
-	data map[int64]map[int64]Node
+	Data map[int64]map[int64]Node
 }
 
 func NewFollow() Follow {
 	return Follow{
-		data: make(map[int64]map[int64]Node),
+		Data: make(map[int64]map[int64]Node),
 	}
 }
 
 func (f *Follow) CountAll() int {
-	return len(f.data)
+	return len(f.Data)
 }
 
 // getLeaders returns the list of users who
 // followed by the current from user
 func (f *Follow) getLeaders(from int64) []int64 {
 	var leaders []int64
-	if _, ok := f.data[from]; ok {
-		leaders = make([]int64, len(f.data[from]))
+	if _, ok := f.Data[from]; ok {
+		// map key to value
+		leaders = make([]int64, len(f.Data[from]))
 		i := 0
-		for k := range f.data[from] {
+		for k := range f.Data[from] {
 			leaders[i] = k
 			i++
 		}
@@ -41,20 +42,20 @@ func (f *Follow) List(from int64) ([]int64, error) {
 }
 
 func (f *Follow) Exists(from, to int64) bool {
-	if _, ex := f.data[from][to]; ex {
+	if _, ex := f.Data[from][to]; ex {
 		return true
 	}
 	return false
 }
 
 func (f *Follow) Add(from, to int64) {
-	if _, ok := f.data[from]; !ok {
-		f.data[from] = make(map[int64]Node)
+	if _, ok := f.Data[from]; !ok {
+		f.Data[from] = make(map[int64]Node)
 	}
 
-	f.data[from][to] = Node{}
+	f.Data[from][to] = Node{}
 }
 
 func (f *Follow) Remove(from, to int64) {
-	delete(f.data[from], to)
+	delete(f.Data[from], to)
 }
