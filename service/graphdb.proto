@@ -10,6 +10,7 @@ package service;
 service Graphdb {
     rpc GetFriendsOfFriends(User) returns (UserSlice) {}
     rpc AddFollow(Follow) returns (Follow) {}
+    rpc RemoveFollow(Follow) returns (Follow) {}
 }
 
 message UserSlice {

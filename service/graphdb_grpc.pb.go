@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type GraphdbClient interface {
 	GetFriendsOfFriends(ctx context.Context, in *User, opts ...grpc.CallOption) (*UserSlice, error)
 	AddFollow(ctx context.Context, in *Follow, opts ...grpc.CallOption) (*Follow, error)
+	RemoveFollow(ctx context.Context, in *Follow, opts ...grpc.CallOption) (*Follow, error)
 }
 
 type graphdbClient struct {
@@ -52,12 +53,22 @@ func (c *graphdbClient) AddFollow(ctx context.Context, in *Follow, opts ...grpc.
 	return out, nil
 }
 
+func (c *graphdbClient) RemoveFollow(ctx context.Context, in *Follow, opts ...grpc.CallOption) (*Follow, error) {
+	out := new(Follow)
+	err := c.cc.Invoke(ctx, "/service.Graphdb/RemoveFollow", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GraphdbServer is the server API for Graphdb service.
 // All implementations must embed UnimplementedGraphdbServer
 // for forward compatibility
 type GraphdbServer interface {
 	GetFriendsOfFriends(context.Context, *User) (*UserSlice, error)
 	AddFollow(context.Context, *Follow) (*Follow, error)
+	RemoveFollow(context.Context, *Follow) (*Follow, error)
 	mustEmbedUnimplementedGraphdbServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedGraphdbServer) GetFriendsOfFriends(context.Context, *User) (*
 }
 func (UnimplementedGraphdbServer) AddFollow(context.Context, *Follow) (*Follow, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddFollow not implemented")
+}
+func (UnimplementedGraphdbServer) RemoveFollow(context.Context, *Follow) (*Follow, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveFollow not implemented")
 }
 func (UnimplementedGraphdbServer) mustEmbedUnimplementedGraphdbServer() {}
 
@@ -120,6 +134,24 @@ func _Graphdb_AddFollow_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Graphdb_RemoveFollow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Follow)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GraphdbServer).RemoveFollow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/service.Graphdb/RemoveFollow",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GraphdbServer).RemoveFollow(ctx, req.(*Follow))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Graphdb_ServiceDesc is the grpc.ServiceDesc for Graphdb service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var Graphdb_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddFollow",
 			Handler:    _Graphdb_AddFollow_Handler,
+		},
+		{
+			MethodName: "RemoveFollow",
+			Handler:    _Graphdb_RemoveFollow_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

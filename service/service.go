@@ -34,4 +34,9 @@ func (ImplementedGraphdbServer) AddFollow(c context.Context, f *Follow) (*Follow
 	return f, nil
 }
 
+func (ImplementedGraphdbServer) RemoveFollow(c context.Context, f *Follow) (*Follow, error) {
+	graphClient.RemoveFollow(f.GetFrom(), f.GetTo())
+	return f, nil
+}
+
 func (ImplementedGraphdbServer) mustEmbedUnimplementedGraphdbServer() {}
