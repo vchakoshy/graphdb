@@ -16,15 +16,26 @@ func (f *Follow) CountAll() int {
 	return len(f.data)
 }
 
-func (f *Follow) List(from int64) ([]int64, error) {
+// getLeaders returns the list of users who
+// followed by the current from user
+func (f *Follow) getLeaders(from int64) []int64 {
+	var leaders []int64
 	if _, ok := f.data[from]; ok {
-		keys := make([]int64, len(f.data[from]))
+		leaders = make([]int64, len(f.data[from]))
 		i := 0
 		for k := range f.data[from] {
-			keys[i] = k
+			leaders[i] = k
 			i++
 		}
-		return keys, nil
+		return leaders
+	}
+	return leaders
+}
+
+func (f *Follow) List(from int64) ([]int64, error) {
+	leaders := f.getLeaders(from)
+	if len(leaders) > 0 {
+		return leaders, nil
 	}
 	return []int64{}, fmt.Errorf("follow not found")
 }
