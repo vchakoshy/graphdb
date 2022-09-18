@@ -1,0 +1,14 @@
+version: "2.4"
+
+services:
+  server:
+    build: .
+    restart: always
+    mem_limit: 14096m
+    mem_reservation: 128M
+    ports:
+      - 8080:8080
+    environment:
+      APP_VERSION: 0.0.1
+      
+
