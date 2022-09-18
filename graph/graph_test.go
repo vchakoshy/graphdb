@@ -1,94 +1,42 @@
 package graph
 
 import (
-	"reflect"
+	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGraph_GetFollows(t *testing.T) {
-	type fields struct {
-		follow map[int64][]int64
+	g := NewGraph()
+	g.AddFollow(1, 5)
+	g.AddFollow(1, 2)
+	g.AddFollow(1, 3)
+	g.AddFollow(1, 4)
+
+	r, err := g.GetFollows(1)
+	if err != nil {
+		t.Errorf("Graph.GetFollows() = %s", err.Error())
 	}
-	type args struct {
-		from int64
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    []int64
-		wantErr bool
-	}{
-		{
-			name:    "get follows 01",
-			fields:  fields{follow: map[int64][]int64{1: {2, 3}}},
-			args:    args{from: 1},
-			want:    []int64{2, 3},
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			g := &Graph{
-				follow: tt.fields.follow,
-			}
-			got, err := g.GetFollows(tt.args.from)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Graph.GetFollows() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Graph.GetFollows() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+
+	sort.Slice(r, func(i, j int) bool { return r[i] < r[j] })
+
+	assert.EqualValues(t, r, []int64{2, 3, 4, 5})
 }
 
 func TestGraph_GetFriendsOfFriends(t *testing.T) {
-	type fields struct {
-		follow map[int64][]int64
+	g := NewGraph()
+	g.AddFollow(1, 2)
+	g.AddFollow(2, 3)
+	g.AddFollow(2, 5)
+	g.AddFollow(3, 1)
+	g.AddFollow(5, 6)
+	r, err := g.GetFriendsOfFriends(1)
+	if err != nil {
+		t.Errorf("Graph.GetFriendsOfFriends() = %s", err.Error())
 	}
-	type args struct {
-		from int64
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    []int64
-		wantErr bool
-	}{
-		{
-			name: "get fof 01",
-			fields: fields{
-				follow: map[int64][]int64{
-					1: {2, 3},
-					2: {3, 1},
-					3: {5, 6},
-				},
-			},
-			args:    args{from: 1},
-			want:    []int64{5, 6},
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			g := &Graph{
-				follow: tt.fields.follow,
-			}
-			got, err := g.GetFriendsOfFriends(tt.args.from)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Graph.GetFriendsOfFriends() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Graph.GetFriendsOfFriends() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	sort.Slice(r, func(i, j int) bool { return r[i] < r[j] })
+	assert.Equal(t, r, []int64{3, 5})
 }
 
 func TestGraph_RemoveFollow(t *testing.T) {
@@ -96,11 +44,15 @@ func TestGraph_RemoveFollow(t *testing.T) {
 	g.AddFollow(1, 2)
 	g.AddFollow(1, 3)
 	g.AddFollow(1, 4)
+	g.AddFollow(1, 8)
+	g.AddFollow(1, 5)
+	g.AddFollow(1, 6)
 	g.RemoveFollow(1, 3)
 	r, err := g.GetFollows(1)
 	if err != nil {
-		t.Errorf("Graph.GetFriendsOfFriends() = %s", err.Error())
+		t.Errorf("Graph.RemoveFollow() = %s", err.Error())
 	}
-	assert.Equal(t, r, []int64{2, 4})
+	sort.Slice(r, func(i, j int) bool { return r[i] < r[j] })
+	assert.Equal(t, r, []int64{2, 4, 5, 6, 8})
 
 }

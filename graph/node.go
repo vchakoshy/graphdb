@@ -1,5 +1,3 @@
 package graph
 
-type Node struct {
-	ID int64
-}
+type Node struct{}

@@ -10,7 +10,7 @@ const AppVersion = "0.0.1"
 // Graph
 type Graph struct {
 	// store user following
-	follow       map[int64][]int64
+	follow       Follow
 	lock         sync.RWMutex
 	metrics      Metrics
 	queryOptions QueryOptions
@@ -18,7 +18,7 @@ type Graph struct {
 
 func NewGraph() *Graph {
 	return &Graph{
-		follow:       make(map[int64][]int64),
+		follow:       NewFollow(),
 		metrics:      Metrics{},
 		queryOptions: QueryOptionsDefault(),
 	}
@@ -31,15 +31,15 @@ func (g *Graph) SetQueryOptions(opts QueryOptions) *Graph {
 
 func (g *Graph) GetMetrics() Metrics {
 	m := g.metrics
-	m.FollowCount = len(g.follow)
+	m.FollowCount = g.follow.CountAll()
 	return m
 }
 
 func (g *Graph) GetFollows(from int64) ([]int64, error) {
 	g.lock.Lock()
 	defer g.lock.Unlock()
-	if v, ok := g.follow[from]; ok {
-		return v, nil
+	if e, err := g.follow.List(from); err == nil {
+		return e, nil
 	}
 	return []int64{}, fmt.Errorf("user not found: %d", from)
 }
@@ -83,16 +83,16 @@ func (g *Graph) AddFollow(from, to int64) *Graph {
 	}
 	g.lock.Lock()
 	defer g.lock.Unlock()
-	if contains(g.follow[from], to) {
+	if g.follow.Exists(from, to) {
 		return g
 	}
-	g.follow[from] = append(g.follow[from], to)
+	g.follow.Add(from, to)
 	return g
 }
 
 func (g *Graph) RemoveFollow(from, to int64) *Graph {
 	g.lock.Lock()
-	g.follow[from] = removeFromSlice(g.follow[from], to)
+	g.follow.Remove(from, to)
 	g.lock.Unlock()
 
 	return g
