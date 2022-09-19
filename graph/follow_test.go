@@ -31,6 +31,19 @@ func TestFollow_Follow(t *testing.T) {
 	assert.Equal(t, f.AdjMatrix[2][5], false)
 }
 
+func BenchmarkFollowAdd(b *testing.B) {
+	f := NewFollow()
+	b.ResetTimer()
+	var from, to int64
+	from = 1
+	to = 100
+	for i := 1; i < b.N; i++ {
+		f.Add(from, to)
+		from++
+		to++
+	}
+}
+
 func TestFollow_CountAll(t *testing.T) {
 	f := NewFollow()
 	f.Add(1, 2)
