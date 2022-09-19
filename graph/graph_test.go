@@ -48,7 +48,7 @@ func TestGraph_GetFriendsOfFriends(t *testing.T) {
 
 	// follow of this user not exists
 	_, err = g.GetFriendsOfFriends(100)
-	assert.NotEqual(t, err, nil)
+	assert.NotEqual(t, err, []int64{})
 }
 
 func TestGraph_RemoveFollow(t *testing.T) {

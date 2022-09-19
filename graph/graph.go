@@ -83,35 +83,7 @@ func (g *Graph) GetFollows(from int64) ([]int64, error) {
 }
 
 func (g *Graph) GetFriendsOfFriends(from int64) ([]int64, error) {
-	f, err := g.GetFollows(from)
-	if err != nil {
-		return []int64{}, err
-	}
-
-	// get all followings of my followings
-	var allFollow []int64
-	for _, i := range f {
-		f2, err := g.GetFollows(i)
-		if err != nil {
-			return []int64{}, err
-		}
-		allFollow = append(allFollow, f2...)
-	}
-
-	// final result, remove from and remove users already followed by from
-	var fr []int64
-
-	for _, f2 := range allFollow {
-		if f2 == from {
-			continue
-		}
-		if contains(f, f2) {
-			continue
-		}
-		fr = append(fr, f2)
-	}
-
-	return fr, nil
+	return g.follow.FofIds(from, 0, 10), nil
 }
 
 func (g *Graph) AddFollow(from, to int64) *Graph {
