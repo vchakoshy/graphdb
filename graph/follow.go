@@ -5,7 +5,8 @@ import (
 )
 
 type Follow struct {
-	Data map[int64]map[int64]Node
+	Data      map[int64]map[int64]Node
+	AdjMatrix map[int64]map[int64]bool // adjacency matrix
 }
 
 func NewFollow() Follow {
@@ -92,6 +93,8 @@ func (f *Follow) Exists(from, to int64) bool {
 func (f *Follow) Add(from, to int64) {
 	if _, ok := f.Data[from]; !ok {
 		f.Data[from] = make(map[int64]Node)
+		f.AdjMatrix[from][to] = true
+		f.AdjMatrix[to][from] = true
 	}
 
 	f.Data[from][to] = Node{}
