@@ -61,6 +61,7 @@ func (f *Follow) Fof(from int64, skip, limit int) map[int64]Node {
 
 	return f.getLimited(out, l)
 }
+
 func (f *Follow) FofIds(from int64, skip, limit int) []int64 {
 	var out []int64
 	for v := range f.Fof(from, skip, limit) {

@@ -2,6 +2,7 @@ package graph
 
 import (
 	"encoding/gob"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -13,12 +14,11 @@ import (
 
 const AppVersion = "0.0.1"
 
-var dumpFile = "data_dump.db"
+var dumpFile = "dump.db"
 
 // Graph
 type Graph struct {
-	// store user following
-	follow       Follow
+	follow       Follow // store user following
 	lock         sync.RWMutex
 	metrics      Metrics
 	queryOptions QueryOptions
@@ -120,16 +120,16 @@ func (g *Graph) getDumpFilePath(f string) string {
 	return path.Join("data", f)
 }
 
-func (g *Graph) save(path string) error {
-	path = g.getDumpFilePath(path)
-	fp, err := os.Create(path)
+func (g *Graph) save(name string) error {
+	name = g.getDumpFilePath(name)
+	fp, err := os.Create(name)
 	if err != nil {
 		return err
 	}
 	enc := gob.NewEncoder(fp)
 	defer func() {
 		if x := recover(); x != nil {
-			err = fmt.Errorf("Error registering item types with Gob library")
+			err = errors.New("error registering item types with Gob library")
 		}
 	}()
 	g.lock.Lock()
@@ -143,9 +143,9 @@ func (g *Graph) save(path string) error {
 	return fp.Close()
 }
 
-func (g *Graph) Load(path string) error {
-	path = g.getDumpFilePath(path)
-	fp, err := os.Open(path)
+func (g *Graph) Load(name string) error {
+	name = g.getDumpFilePath(name)
+	fp, err := os.Open(name)
 	if err != nil {
 		return err
 	}
