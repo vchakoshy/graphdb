@@ -1,3 +1,5 @@
+[![Go](https://github.com/vchakoshy/graphdb/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/vchakoshy/graphdb/actions/workflows/go.yml)
+
 # GraphDB 
 GraphDB is an open source In Memory graph database written in Golang, optimized for social networks.
 
