@@ -30,7 +30,10 @@ func NewGraph() *Graph {
 	}
 
 	g.handleClose()
-	g.Load(dumpFile)
+	err := g.Load(dumpFile)
+	if err != nil {
+		log.Println("error loading graph:", err)
+	}
 
 	return g
 }
