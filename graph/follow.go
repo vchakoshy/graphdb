@@ -1,6 +1,8 @@
 package graph
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Follow struct {
 	Data map[int64]map[int64]Node
@@ -31,6 +33,45 @@ func (f *Follow) GetLeaders(from int64) []int64 {
 		return leaders
 	}
 	return leaders
+}
+
+func (f *Follow) Fof(from int64, skip, limit int) map[int64]Node {
+	allFof := make(map[int64]Node)
+	f1 := f.Data[from]
+	for k := range f1 {
+		for k2, v := range f.Data[k] {
+			// from use remove from list
+			if k2 == from {
+				continue
+			}
+			// currently followed by user remove from list
+			if _, ex := f1[k2]; ex {
+				continue
+			}
+			allFof[k2] = v
+		}
+	}
+
+	_defaultLimit := _defaultQueryLimit
+	if limit > 0 {
+		_defaultLimit = limit
+	}
+
+	return f.getLimited(allFof, _defaultLimit)
+
+}
+
+func (f *Follow) getLimited(d map[int64]Node, limit int) map[int64]Node {
+	tmp := make(map[int64]Node)
+	i := 0
+	for k, v := range d {
+		if i == limit {
+			return tmp
+		}
+		tmp[k] = v
+		i++
+	}
+	return tmp
 }
 
 func (f *Follow) List(from int64) ([]int64, error) {
