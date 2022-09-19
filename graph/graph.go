@@ -3,11 +3,15 @@ package graph
 import (
 	"encoding/gob"
 	"fmt"
+	"log"
 	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 )
 
 const AppVersion = "0.0.1"
+const dumpFile = "data/data_dump.db"
 
 // Graph
 type Graph struct {
@@ -19,11 +23,38 @@ type Graph struct {
 }
 
 func NewGraph() *Graph {
-	return &Graph{
+	g := &Graph{
 		follow:       NewFollow(),
 		metrics:      Metrics{},
 		queryOptions: QueryOptionsDefault(),
 	}
+
+	g.handleClose()
+	g.Load(dumpFile)
+
+	return g
+}
+
+func (g *Graph) handleClose() {
+	var gracefulStop = make(chan os.Signal)
+	signal.Notify(gracefulStop, syscall.SIGTERM)
+	signal.Notify(gracefulStop, syscall.SIGINT)
+	go func() {
+		sig := <-gracefulStop
+		fmt.Printf("caught sig: %+v", sig)
+		err := g.Close()
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		os.Exit(0)
+	}()
+}
+
+func (g *Graph) Close() error {
+	log.Println("Closing Graph")
+	log.Println("save data")
+	return g.save(dumpFile)
 }
 
 func (g *Graph) SetQueryOptions(opts QueryOptions) *Graph {
