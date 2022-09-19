@@ -1,6 +1,6 @@
 package graph
 
-const _defaultQueryLimit = 10
+const DefaultQueryLimit = 10
 
 type QueryOptions struct {
 	Limit int
@@ -8,5 +8,5 @@ type QueryOptions struct {
 }
 
 func QueryOptionsDefault() QueryOptions {
-	return QueryOptions{Limit: _defaultQueryLimit}
+	return QueryOptions{Limit: DefaultQueryLimit}
 }

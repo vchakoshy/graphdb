@@ -23,22 +23,22 @@ func (f *Follow) CountAll() int {
 // GetLeaders returns the list of users who
 // followed by the current from user
 func (f *Follow) GetLeaders(from int64) []int64 {
-	var leaders []int64
+	var out []int64
 	if _, ok := f.Data[from]; ok {
 		// map key to value
-		leaders = make([]int64, len(f.Data[from]))
+		out = make([]int64, len(f.Data[from]))
 		i := 0
 		for k := range f.Data[from] {
-			leaders[i] = k
+			out[i] = k
 			i++
 		}
-		return leaders
+		return out
 	}
-	return leaders
+	return out
 }
 
 func (f *Follow) Fof(from int64, skip, limit int) map[int64]Node {
-	allFof := make(map[int64]Node)
+	out := make(map[int64]Node)
 	f1 := f.Data[from]
 	for k := range f1 {
 		for k2, v := range f.Data[k] {
@@ -50,36 +50,36 @@ func (f *Follow) Fof(from int64, skip, limit int) map[int64]Node {
 			if _, ex := f1[k2]; ex {
 				continue
 			}
-			allFof[k2] = v
+			out[k2] = v
 		}
 	}
 
-	_defaultLimit := _defaultQueryLimit
+	l := DefaultQueryLimit
 	if limit > 0 {
-		_defaultLimit = limit
+		l = limit
 	}
 
-	return f.getLimited(allFof, _defaultLimit)
+	return f.getLimited(out, l)
 
 }
 
 func (f *Follow) getLimited(d map[int64]Node, limit int) map[int64]Node {
-	tmp := make(map[int64]Node)
+	out := make(map[int64]Node)
 	i := 0
 	for k, v := range d {
 		if i == limit {
-			return tmp
+			return out
 		}
-		tmp[k] = v
+		out[k] = v
 		i++
 	}
-	return tmp
+	return out
 }
 
 func (f *Follow) List(from int64) ([]int64, error) {
-	leaders := f.GetLeaders(from)
-	if len(leaders) > 0 {
-		return leaders, nil
+	out := f.GetLeaders(from)
+	if len(out) > 0 {
+		return out, nil
 	}
 	return []int64{}, fmt.Errorf("follow not found")
 }
@@ -99,6 +99,7 @@ func (f *Follow) Add(from, to int64) {
 	if _, ok := f.AdjMatrix[from]; !ok {
 		f.AdjMatrix[from] = make(map[int64]bool)
 	}
+
 	if _, ok := f.AdjMatrix[to]; !ok {
 		f.AdjMatrix[to] = make(map[int64]bool)
 	}
@@ -132,12 +133,12 @@ func (f *Follow) SuggestByUser(user int64) []int64 {
 		}
 	}
 
-	var fr []int64
+	var out []int64
 	for k := range allF {
-		fr = append(fr, k)
+		out = append(out, k)
 	}
 
-	return fr
+	return out
 }
 
 func (f *Follow) Remove(from, to int64) {
