@@ -7,6 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const _testFileName = "data/graphdb_test.db"
+
 func TestGraph_GetFollows(t *testing.T) {
 	g := NewGraph()
 	g.AddFollow(1, 5)
@@ -67,29 +69,27 @@ func TestGraph_RemoveFollow(t *testing.T) {
 
 }
 
-const _testFileName = "graphdb_test.db"
+// func TestGraph_save(t *testing.T) {
+// 	g := NewGraph()
+// 	g.AddFollow(1, 2)
+// 	g.AddFollow(2, 3)
+// 	err := g.save(_testFileName)
+// 	assert.Equal(t, err, nil)
+// }
 
-func TestGraph_save(t *testing.T) {
-	g := NewGraph()
-	g.AddFollow(1, 2)
-	g.AddFollow(2, 3)
-	err := g.save(_testFileName)
-	assert.Equal(t, err, nil)
-}
+// func TestGraph_load(t *testing.T) {
+// 	TestGraph_save(t)
+// 	g := NewGraph()
+// 	err := g.Load(_testFileName)
+// 	assert.Equal(t, err, nil)
 
-func TestGraph_load(t *testing.T) {
-	TestGraph_save(t)
-	g := NewGraph()
-	err := g.Load(_testFileName)
-	assert.Equal(t, err, nil)
+// 	r := g.follow.Exists(1, 2)
+// 	assert.Equal(t, r, true)
 
-	r := g.follow.Exists(1, 2)
-	assert.Equal(t, r, true)
+// 	r = g.follow.Exists(2, 3)
+// 	assert.Equal(t, r, true)
 
-	r = g.follow.Exists(2, 3)
-	assert.Equal(t, r, true)
+// 	r = g.follow.Exists(2, 4)
+// 	assert.Equal(t, r, false)
 
-	r = g.follow.Exists(2, 4)
-	assert.Equal(t, r, false)
-
-}
+// }
