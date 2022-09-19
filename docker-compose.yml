@@ -11,7 +11,11 @@ services:
       - 8081:8081
     environment:
       APP_VERSION: 0.0.1
+      DATA_DIR: /var/lib/graphdb/
     volumes:
-      - ./data:/data
-      
+      - db:/var/lib/graphdb
+
+volumes:
+  db:
+    driver: local
 

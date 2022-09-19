@@ -6,12 +6,14 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"path"
 	"sync"
 	"syscall"
 )
 
 const AppVersion = "0.0.1"
-const dumpFile = "data/data_dump.db"
+
+var dumpFile = "data_dump.db"
 
 // Graph
 type Graph struct {
@@ -134,7 +136,16 @@ func (g *Graph) RemoveFollow(from, to int64) *Graph {
 	return g
 }
 
+func (g *Graph) getDumpFilePath(f string) string {
+	ed := os.Getenv("DATA_DIR")
+	if ed != "" {
+		return path.Join(ed, f)
+	}
+	return path.Join("data", f)
+}
+
 func (g *Graph) save(path string) error {
+	path = g.getDumpFilePath(path)
 	fp, err := os.Create(path)
 	if err != nil {
 		return err
@@ -157,6 +168,7 @@ func (g *Graph) save(path string) error {
 }
 
 func (g *Graph) Load(path string) error {
+	path = g.getDumpFilePath(path)
 	fp, err := os.Open(path)
 	if err != nil {
 		return err
