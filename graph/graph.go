@@ -128,6 +128,10 @@ func (g *Graph) AddFollow(from, to int64) *Graph {
 	return g
 }
 
+func (g *Graph) SuggestByUser(user int64) *Graph {
+	return g
+}
+
 func (g *Graph) RemoveFollow(from, to int64) *Graph {
 	g.lock.Lock()
 	g.follow.Remove(from, to)

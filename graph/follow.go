@@ -6,12 +6,13 @@ import (
 
 type Follow struct {
 	Data      map[int64]map[int64]Node
-	AdjMatrix map[int64]map[int64]bool // adjacency matrix
+	AdjMatrix map[int64]map[int64]bool
 }
 
 func NewFollow() Follow {
 	return Follow{
-		Data: make(map[int64]map[int64]Node),
+		Data:      make(map[int64]map[int64]Node),
+		AdjMatrix: make(map[int64]map[int64]bool),
 	}
 }
 
@@ -93,11 +94,50 @@ func (f *Follow) Exists(from, to int64) bool {
 func (f *Follow) Add(from, to int64) {
 	if _, ok := f.Data[from]; !ok {
 		f.Data[from] = make(map[int64]Node)
-		f.AdjMatrix[from][to] = true
-		f.AdjMatrix[to][from] = true
+	}
+
+	if _, ok := f.AdjMatrix[from]; !ok {
+		f.AdjMatrix[from] = make(map[int64]bool)
+	}
+	if _, ok := f.AdjMatrix[to]; !ok {
+		f.AdjMatrix[to] = make(map[int64]bool)
 	}
 
 	f.Data[from][to] = Node{}
+	f.AdjMatrix[from][to] = true
+	f.AdjMatrix[to][from] = true
+}
+
+func (f *Follow) SuggestByUser(user int64) []int64 {
+	if _, ok := f.AdjMatrix[user]; !ok {
+		return []int64{}
+	}
+	var followers []int64
+	for u := range f.AdjMatrix[user] {
+		followers = append(followers, u)
+	}
+
+	// followers also follow
+	allF := make(map[int64]int64)
+	for _, f1 := range followers {
+		for _, i := range f.GetLeaders(f1) {
+			if i == user {
+				continue
+			}
+			if v, ok := allF[i]; ok {
+				allF[i] = v + 1
+			} else {
+				allF[i] = 1
+			}
+		}
+	}
+
+	var fr []int64
+	for k := range allF {
+		fr = append(fr, k)
+	}
+
+	return fr
 }
 
 func (f *Follow) Remove(from, to int64) {
