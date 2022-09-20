@@ -12,7 +12,7 @@ import (
 	"syscall"
 )
 
-const AppVersion = "0.0.1"
+const AppVersion = "0.0.5"
 
 var dumpFile = "dump.db"
 
