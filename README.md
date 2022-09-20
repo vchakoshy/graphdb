@@ -8,6 +8,10 @@ GraphDB is an open source In Memory graph database written in Golang, optimized 
 go run main.go api
 ```
 
+rest api http://localhost:8081 
+
+grpc server http://localhost:8080
+
 ## Client 
 
 ```bash 
@@ -19,8 +23,9 @@ import "github.com/vchakoshy/graphdb/service"
 ```
 
 ```golang
-var opts []grpc.DialOption
-opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+var opts []grpc.DialOption{
+    grpc.WithTransportCredentials(insecure.NewCredentials()),
+}
 
 conn, err := grpc.Dial("127.0.0.1:8080", opts...)
 if err != nil {
@@ -29,15 +34,16 @@ if err != nil {
 defer conn.Close()
 
 client := service.NewGraphdbClient(conn)
+ctx := context.Background()
 
 // add follow items
-client.AddFollow(context.Background(), &service.Follow{From: 1, To: 2})
-client.AddFollow(context.Background(), &service.Follow{From: 2, To: 3})
-client.AddFollow(context.Background(), &service.Follow{From: 2, To: 4})
-client.AddFollow(context.Background(), &service.Follow{From: 2, To: 5})
+client.AddFollow(ctx, &service.Follow{From: 1, To: 2})
+client.AddFollow(ctx, &service.Follow{From: 2, To: 3})
+client.AddFollow(ctx, &service.Follow{From: 2, To: 4})
+client.AddFollow(ctx, &service.Follow{From: 2, To: 5})
 
 // Get friends of friends 
-res, err := client.GetFriendsOfFriends(context.Background(), &service.User{Id: 1})
+res, err := client.GetFriendsOfFriends(ctx, &service.User{Id: 1})
 if err != nil {
     panic(err)
 }
