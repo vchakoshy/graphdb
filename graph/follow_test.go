@@ -2,7 +2,6 @@ package graph
 
 import (
 	"math/rand"
-	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -70,19 +69,32 @@ func TestFollow_Remove(t *testing.T) {
 func TestFollow_SuggestByUser(t *testing.T) {
 	f := NewFollow()
 	f.Add(1, 2)
-	f.Add(2, 3)
-	f.Add(3, 2)
-	f.Add(4, 2)
-	f.Add(5, 2)
-	f.Add(3, 6)
-	f.Add(4, 6)
-	f.Add(5, 8)
 
-	r := f.SuggestByUser(2)
-	sort.Slice(r, func(i, j int) bool { return r[i] < r[j] })
+	var i int64
+	// users by id [3..50] follows 2
+	for i = 3; i <= 50; i++ {
+		f.Add(i, 2)
+	}
 
-	assert.Equal(t, []int64{6, 8}, r)
+	// users by id [3..50] also follows
+	for i = 3; i <= 50; i++ {
+		f.Add(i, 8)
+	}
+	for i = 4; i <= 50; i++ {
+		f.Add(i, 9)
+	}
+	for i = 1; i <= 50; i++ {
+		f.Add(i, 1)
+	}
+	for i = 10; i <= 50; i++ {
+		f.Add(i, 12)
+	}
 
-	r = f.SuggestByUser(1000)
+	r := f.SuggestByUser(2, 2)
+	// sort.Slice(r, func(i, j int) bool { return r[i] < r[j] })
+
+	assert.Equal(t, []int64{1, 8}, r)
+
+	r = f.SuggestByUser(10000, 10)
 	assert.Equal(t, []int64{}, r)
 }

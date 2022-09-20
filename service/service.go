@@ -12,8 +12,7 @@ func SetGraphClient(g *graph.Graph) {
 	graphClient = g
 }
 
-type ImplementedGraphdbServer struct {
-}
+type ImplementedGraphdbServer struct{}
 
 func (ImplementedGraphdbServer) GetFriendsOfFriends(c context.Context, u *User) (*UserSlice, error) {
 	ul, err := graphClient.GetFriendsOfFriends(u.GetId())

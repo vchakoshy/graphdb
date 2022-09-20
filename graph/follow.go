@@ -2,6 +2,7 @@ package graph
 
 import (
 	"fmt"
+	"sort"
 )
 
 type Follow struct {
@@ -116,7 +117,7 @@ func (f *Follow) Add(from, to int64) {
 	f.AdjMatrix[to][from] = true
 }
 
-func (f *Follow) SuggestByUser(user int64) []int64 {
+func (f *Follow) SuggestByUser(user int64, limit int) []int64 {
 	if _, ok := f.AdjMatrix[user]; !ok {
 		return []int64{}
 	}
@@ -140,9 +141,17 @@ func (f *Follow) SuggestByUser(user int64) []int64 {
 		}
 	}
 
-	var out []int64
-	for k := range allF {
-		out = append(out, k)
+	out := make([]int64, 0, len(allF))
+	for name := range allF {
+		out = append(out, name)
+	}
+
+	sort.Slice(out, func(i, j int) bool {
+		return allF[out[i]] > allF[out[j]]
+	})
+
+	if len(out) > limit {
+		return out[:limit]
 	}
 
 	return out
