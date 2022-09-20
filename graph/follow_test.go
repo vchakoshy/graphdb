@@ -59,9 +59,12 @@ func TestFollow_Remove(t *testing.T) {
 	f.Add(9, 100)
 
 	f.Remove(1, 2)
-	assert.Equal(t, f.AdjMatrix[1][2], false)
+	assert.Equal(t, f.AdjMatrix[1][2], true)
 	assert.Equal(t, f.AdjMatrix[2][1], true)
 	assert.Equal(t, f.AdjMatrix[2][5], false)
+	f.Remove(2, 1)
+	assert.Equal(t, f.AdjMatrix[1][2], false)
+	assert.Equal(t, f.AdjMatrix[2][1], false)
 }
 
 func TestFollow_SuggestByUser(t *testing.T) {

@@ -150,5 +150,9 @@ func (f *Follow) SuggestByUser(user int64) []int64 {
 
 func (f *Follow) Remove(from, to int64) {
 	delete(f.Data[from], to)
-	delete(f.AdjMatrix[from], to)
+
+	if !f.Exists(to, from) {
+		delete(f.AdjMatrix[from], to)
+		delete(f.AdjMatrix[to], from)
+	}
 }
