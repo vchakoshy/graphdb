@@ -83,6 +83,8 @@ func (g *Graph) GetFollows(from int64) ([]int64, error) {
 }
 
 func (g *Graph) GetFriendsOfFriends(from int64) ([]int64, error) {
+	g.lock.Lock()
+	defer g.lock.Unlock()
 	return g.follow.FofIds(from, 0, 10), nil
 }
 
